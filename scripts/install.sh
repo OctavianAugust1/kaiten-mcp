@@ -81,3 +81,40 @@ elif [ -n "$previous_version" ]; then
 else
 	printf '%s\n' "Installed kaiten-mcp ${version} to ${install_dir}/kaiten-mcp"
 fi
+
+register_codex() {
+	if ! command -v codex >/dev/null 2>&1; then
+		printf '%s\n' "Codex CLI was not found; skipped Codex MCP registration"
+		return
+	fi
+	if codex mcp get kaiten >/dev/null 2>&1; then
+		printf '%s\n' "Codex MCP server 'kaiten' is already configured"
+		return
+	fi
+	if codex mcp add kaiten -- "${install_dir}/kaiten-mcp"; then
+		printf '%s\n' "Added global MCP server 'kaiten' to Codex"
+	else
+		printf '%s\n' "install: could not register kaiten in Codex; add it manually" >&2
+	fi
+}
+
+register_claude() {
+	if ! command -v claude >/dev/null 2>&1; then
+		printf '%s\n' "Claude Code CLI was not found; skipped Claude Code MCP registration"
+		return
+	fi
+	if claude mcp get kaiten >/dev/null 2>&1; then
+		printf '%s\n' "Claude Code MCP server 'kaiten' is already configured"
+		return
+	fi
+	if claude mcp add kaiten --scope user -- "${install_dir}/kaiten-mcp"; then
+		printf '%s\n' "Added user-scope MCP server 'kaiten' to Claude Code"
+	else
+		printf '%s\n' "install: could not register kaiten in Claude Code; add it manually" >&2
+	fi
+}
+
+if [ "${KAITEN_MCP_REGISTER_CLIENTS:-1}" != "0" ]; then
+	register_codex
+	register_claude
+fi

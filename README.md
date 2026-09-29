@@ -34,7 +34,16 @@ curl -fsSL https://raw.githubusercontent.com/OctavianAugust1/kaiten-mcp/main/scr
 ```
 
 Она заменяет только `~/.local/bin/kaiten-mcp` и внутренний бинарник. `.bashrc`
-и конфигурация Codex не изменяются; повторно выполнять `codex mcp add` не нужно.
+и существующие конфигурации клиентов не изменяются.
+
+Если в системе найден `codex` или `claude`, installer автоматически добавляет
+глобальный MCP с именем `kaiten` соответственно в Codex и Claude Code. В уже
+существующую одноимённую конфигурацию он не вмешивается. Чтобы установить только
+бинарник без регистрации клиентов, используйте:
+
+```sh
+curl -fsSL https://raw.githubusercontent.com/OctavianAugust1/kaiten-mcp/main/scripts/install.sh | KAITEN_MCP_REGISTER_CLIENTS=0 sh
+```
 
 ### Сборка из исходного кода
 
@@ -101,6 +110,19 @@ codex mcp add kaiten -- ~/.local/bin/kaiten-mcp
 ```
 
 Перезапустите сессию Codex после изменения `.bashrc`.
+
+### Claude Code
+
+Installer автоматически выполняет эквивалент следующей команды, если находит
+`claude` в `PATH`:
+
+```sh
+claude mcp add kaiten --scope user -- ~/.local/bin/kaiten-mcp
+```
+
+Это пользовательская конфигурация, доступная во всех локальных проектах Claude
+Code. Launcher берёт параметры Kaiten из `~/.bashrc` так же, как при запуске
+из Codex. После изменения `.bashrc` перезапустите Claude Code.
 
 ### Claude Desktop
 
