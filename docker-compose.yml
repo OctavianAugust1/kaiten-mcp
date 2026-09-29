@@ -1,0 +1,28 @@
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: development
+    working_dir: /workspace
+    stdin_open: true
+    tty: true
+    volumes:
+      - ./:/workspace
+      - go-pkg-cache:/go/pkg/mod
+      - go-build-cache:/root/.cache/go-build
+    environment:
+      CGO_ENABLED: "0"
+
+  kaiten-mcp:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: runtime
+    stdin_open: true
+    env_file:
+      - .env
+
+volumes:
+  go-pkg-cache:
+  go-build-cache:

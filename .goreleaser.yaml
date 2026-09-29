@@ -1,0 +1,34 @@
+version: 2
+
+project_name: kaiten-mcp
+
+before:
+  hooks:
+    - go mod tidy
+
+builds:
+  - id: kaiten-mcp
+    main: ./cmd/kaiten-mcp
+    binary: kaiten-mcp
+    env:
+      - CGO_ENABLED=0
+    goos:
+      - linux
+      - darwin
+    goarch:
+      - amd64
+      - arm64
+    ldflags:
+      - -s -w -X main.version={{ .Version }}
+
+archives:
+  - id: kaiten-mcp
+    formats:
+      - tar.gz
+    name_template: "{{ .ProjectName }}_{{ .Version }}_{{ .Os }}_{{ .Arch }}"
+
+checksum:
+  name_template: "kaiten-mcp_checksums.txt"
+
+changelog:
+  sort: asc
