@@ -52,6 +52,12 @@ fi
 tar -xzf "${temporary_dir}/${archive}" -C "$temporary_dir"
 [ -f "${temporary_dir}/kaiten-mcp" ] || fail "archive does not contain kaiten-mcp"
 mkdir -p "$install_dir"
+
+previous_version=""
+if [ -r "${install_dir}/.kaiten-mcp-version" ]; then
+	previous_version="$(cat "${install_dir}/.kaiten-mcp-version")"
+fi
+
 install -m 0755 "${temporary_dir}/kaiten-mcp" "${install_dir}/kaiten-mcp-bin"
 
 # Codex starts the configured command directly, so this launcher loads the
@@ -66,4 +72,12 @@ printf '%s\n' \
 	'exec "${script_dir}/kaiten-mcp-bin" "$@"' \
 	> "${install_dir}/kaiten-mcp"
 chmod 0755 "${install_dir}/kaiten-mcp"
-printf '%s\n' "Installed kaiten-mcp ${version} to ${install_dir}/kaiten-mcp"
+printf '%s\n' "$version" > "${install_dir}/.kaiten-mcp-version"
+
+if [ -n "$previous_version" ] && [ "$previous_version" != "$version" ]; then
+	printf '%s\n' "Updated kaiten-mcp from ${previous_version} to ${version} in ${install_dir}/kaiten-mcp"
+elif [ -n "$previous_version" ]; then
+	printf '%s\n' "Reinstalled current kaiten-mcp ${version} in ${install_dir}/kaiten-mcp"
+else
+	printf '%s\n' "Installed kaiten-mcp ${version} to ${install_dir}/kaiten-mcp"
+fi

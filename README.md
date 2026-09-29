@@ -27,6 +27,15 @@ Release, сверяет его SHA-256 с файлом контрольных с
 Для установки конкретной версии задайте `KAITEN_MCP_VERSION=vX.Y.Z`; чтобы
 сменить каталог установки, задайте `KAITEN_MCP_INSTALL_DIR=/путь/к/каталогу`.
 
+Эта же команда обновляет уже установленный MCP до последнего GitHub Release:
+
+```sh
+curl -fsSL https://raw.githubusercontent.com/OctavianAugust1/kaiten-mcp/main/scripts/install.sh | sh
+```
+
+Она заменяет только `~/.local/bin/kaiten-mcp` и внутренний бинарник. `.bashrc`
+и конфигурация Codex не изменяются; повторно выполнять `codex mcp add` не нужно.
+
 ### Сборка из исходного кода
 
 Установите Go 1.26 или новее, настройте переменные и запустите сервер:
