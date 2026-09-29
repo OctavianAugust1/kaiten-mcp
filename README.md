@@ -21,7 +21,9 @@ curl -fsSL https://raw.githubusercontent.com/OctavianAugust1/kaiten-mcp/main/scr
 
 Скрипт определяет `amd64` или `arm64`, скачивает подходящий архив GitHub
 Release, сверяет его SHA-256 с файлом контрольных сумм и устанавливает
-`kaiten-mcp` в `~/.local/bin`. При необходимости добавьте этот каталог в `PATH`.
+`kaiten-mcp` в `~/.local/bin`. Этот launcher перед запуском считывает
+экспортированные переменные из `~/.bashrc`. При необходимости добавьте этот
+каталог в `PATH`.
 Для установки конкретной версии задайте `KAITEN_MCP_VERSION=vX.Y.Z`; чтобы
 сменить каталог установки, задайте `KAITEN_MCP_INSTALL_DIR=/путь/к/каталогу`.
 
@@ -61,6 +63,37 @@ go build -o kaiten-mcp ./cmd/kaiten-mcp
 | `LOG_LEVEL` | нет | `debug`, `info`, `warn` или `error`; по умолчанию `info` |
 
 ## Подключение MCP-клиента
+
+### Codex CLI
+
+Укажите параметры Kaiten в `~/.bashrc` **до** блока, который завершает
+неинтерактивную оболочку (`case $- in ... return`). Например:
+
+```sh
+export KAITEN_BASE_URL='https://ваш-домен.kaiten.ru/api/v1'
+export KAITEN_TOKEN='новый_токен_kaiten'
+export KAITEN_REQUEST_TIMEOUT='30s'
+export KAITEN_DEFAULT_PAGE_LIMIT='50'
+export LOG_LEVEL='error'
+```
+
+После установки зарегистрируйте launcher без передачи токена и других
+переменных в конфигурацию Codex:
+
+```sh
+codex mcp add kaiten -- ~/.local/bin/kaiten-mcp
+```
+
+Если сервер уже был добавлен с `--env`, удалите его и добавьте заново:
+
+```sh
+codex mcp remove kaiten
+codex mcp add kaiten -- ~/.local/bin/kaiten-mcp
+```
+
+Перезапустите сессию Codex после изменения `.bashrc`.
+
+### Claude Desktop
 
 Пример конфигурации Claude Desktop:
 

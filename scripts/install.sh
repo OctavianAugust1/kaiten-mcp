@@ -52,5 +52,18 @@ fi
 tar -xzf "${temporary_dir}/${archive}" -C "$temporary_dir"
 [ -f "${temporary_dir}/kaiten-mcp" ] || fail "archive does not contain kaiten-mcp"
 mkdir -p "$install_dir"
-install -m 0755 "${temporary_dir}/kaiten-mcp" "${install_dir}/kaiten-mcp"
+install -m 0755 "${temporary_dir}/kaiten-mcp" "${install_dir}/kaiten-mcp-bin"
+
+# Codex starts the configured command directly, so this launcher loads the
+# user's exported Kaiten settings before it delegates to the downloaded binary.
+printf '%s\n' \
+	'#!/usr/bin/env bash' \
+	'set -euo pipefail' \
+	'script_dir="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"' \
+	'if [[ -r "${HOME}/.bashrc" ]]; then' \
+	'  source "${HOME}/.bashrc" >/dev/null 2>&1 || true' \
+	'fi' \
+	'exec "${script_dir}/kaiten-mcp-bin" "$@"' \
+	> "${install_dir}/kaiten-mcp"
+chmod 0755 "${install_dir}/kaiten-mcp"
 printf '%s\n' "Installed kaiten-mcp ${version} to ${install_dir}/kaiten-mcp"
